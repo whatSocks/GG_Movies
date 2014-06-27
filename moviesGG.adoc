@@ -41,7 +41,7 @@ Let's input the Movie nodes:
 
 [source,cypher]
 ----
-LOAD CSV FROM 'link for movies' AS line FIELDTERMINATOR '|'
+LOAD CSV FROM 'https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv' AS line FIELDTERMINATOR '|'
 CREATE (:Movie { title: str(line.title), id: toInt(line.id), released: toInt(line.released), tagline: str(line.tagline), summary: str(line.summary), rated: str(line.rated), duration: str(line.duration)})
 ----
 
@@ -57,7 +57,7 @@ here's the query:
 
 [source,cypher]
 ----
-LOAD CSV FROM 'link for people' AS line FIELDTERMINATOR '|'
+LOAD CSV FROM 'https://raw.githubusercontent.com/whatSocks/GG_Movies/master/persons.csv' AS line FIELDTERMINATOR '|'
 CREATE (:Person { name: str(line.name), id: toInt(line.id), born: toInt(line.born) })
 ----
 
@@ -72,7 +72,7 @@ Person_id|Movie_id
 here's the query:
 [source,cypher]
 ----
-LOAD CSV FROM 'link for relationship' AS line FIELDTERMINATOR '|'
+LOAD CSV FROM 'https://raw.githubusercontent.com/whatSocks/GG_Movies/master/acted_in.csv' AS line FIELDTERMINATOR '|'
 MATCH (p:Person {id: toInt(line.Person_id)}), (m:Movie {id: toInt(line.Movie_id)})
 MERGE (p)-[:ACTED_IN]-(m)
 ----
@@ -111,7 +111,8 @@ LIMIT 25
 //table
 
 
-intro to graphgist
+== References
+
 - http://www.neo4j.org/learn/cypher
 - http://docs.neo4j.org/chunked/stable/cypherdoc-movie-database.html
 - http://docs.neo4j.org/chunked/stable/cypherdoc-social-movie-database.html

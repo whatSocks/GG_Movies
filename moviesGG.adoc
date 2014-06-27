@@ -17,15 +17,6 @@ Although we can put a lot of information and really build out relationships in t
 
 To import data from a CSV file into Neo4j, you can use LOAD CSV to get the data into your query, then you write it to your database using the normal updating clauses of Cypher.
 
-Let's initialize an empty database.
-
-//hide
-//setup
-[source,cypher]
-----
-----
-//graph
-
 
 Let's put in the Movies nodes from `movies.csv`, the contents of which looks something like this:
 
@@ -41,7 +32,8 @@ Let's input the Movie nodes:
 
 [source,cypher]
 ----
-LOAD CSV FROM 'https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv' AS line FIELDTERMINATOR '|'
+LOAD CSV
+WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv" AS line FIELDTERMINATOR '|'
 CREATE (:Movie { title: str(line.title), id: toInt(line.id), released: toInt(line.released), tagline: str(line.tagline), summary: str(line.summary), rated: str(line.rated), duration: str(line.duration)})
 ----
 
@@ -57,8 +49,11 @@ here's the query:
 
 [source,cypher]
 ----
-LOAD CSV FROM 'https://raw.githubusercontent.com/whatSocks/GG_Movies/master/persons.csv' AS line FIELDTERMINATOR '|'
-CREATE (:Person { name: str(line.name), id: toInt(line.id), born: toInt(line.born) })
+LOAD CSV 
+WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv" AS line FIELDTERMINATOR '|' 
+CREATE (:Movie { title: line.title, id: toInt(line.id), released: toInt(line.released), tagline: line.tagline, summary: line.summary, rated: line.rated, duration: toInt(line.duration)})
+RETURN *
+LIMIT 2
 ----
 
 Now Let's input the relationships between Persons and Movies. This is what they look like in the csv file. Again, there's a header file and the ids from the Person and Movie files. 
@@ -72,7 +67,9 @@ Person_id|Movie_id
 here's the query:
 [source,cypher]
 ----
-LOAD CSV FROM 'https://raw.githubusercontent.com/whatSocks/GG_Movies/master/acted_in.csv' AS line FIELDTERMINATOR '|'
+LOAD CSV
+WITH HEADERS
+FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/acted_in.csv" AS line FIELDTERMINATOR '|'
 MATCH (p:Person {id: toInt(line.Person_id)}), (m:Movie {id: toInt(line.Movie_id)})
 MERGE (p)-[:ACTED_IN]-(m)
 ----
@@ -116,5 +113,6 @@ LIMIT 25
 - http://www.neo4j.org/learn/cypher
 - http://docs.neo4j.org/chunked/stable/cypherdoc-movie-database.html
 - http://docs.neo4j.org/chunked/stable/cypherdoc-social-movie-database.html
+- http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/
 
 

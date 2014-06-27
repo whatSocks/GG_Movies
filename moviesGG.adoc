@@ -1,0 +1,119 @@
+= Movies GraphGist
+:neo4j-version: 2.1.0  <-- what version
+:author: Cristina
+:description: The GraphGist of the Movies Database
+
+== Table of Contents
+
+[[introduction]]
+== LOASCSV and the Neo Technology Movie Graph
+
+This GraphGist demonstrates how to use the LOADCSV command in Cypher to build part of the iconic Neo Technology Movie Database example, and explore some of the queries used in the [name of movies webapp] example.  
+
+Although we can put a lot of information and really build out relationships in the the Movie Database example, this Graph Gist will only focus on Movies, Persons, and the (:Person)-[:ACTED_IN]->(:Movie) relationship. 
+
+[loadcsv]
+== Using Load CSV
+
+To import data from a CSV file into Neo4j, you can use LOAD CSV to get the data into your query, then you write it to your database using the normal updating clauses of Cypher.
+
+Let's initialize an empty database.
+
+//hide
+//setup
+[source,cypher]
+----
+----
+//graph
+
+
+Let's put in the Movies nodes from `movies.csv`, the contents of which looks something like this:
+
+```
+title|id|released|tagline|summary|rated|duration
+21 Jump Street|62|2012|They thought the streets were mean. Then they went back to high school.|In high school,...|R|109"
+A Few Good Men|5|1992|In the heart of the nation's capital...|Neo military lawyer Kaffee...|R|138
+```
+
+There are seven pipe-delimited fields, many rows, and a header row. 
+
+Let's input the Movie nodes:
+
+[source,cypher]
+----
+LOAD CSV FROM 'link for movies' AS line FIELDTERMINATOR '|'
+CREATE (:Movie { title: str(line.title), id: toInt(line.id), released: toInt(line.released), tagline: str(line.tagline), summary: str(line.summary), rated: str(line.rated), duration: str(line.duration)})
+----
+
+Let's input the Person nodes. This is what they look like in the csv file:
+
+```
+name|id|born
+Aaron Sorkin|24|1961
+Adelaide Clemens|398|1989
+```
+
+here's the query:
+
+[source,cypher]
+----
+LOAD CSV FROM 'link for people' AS line FIELDTERMINATOR '|'
+CREATE (:Person { name: str(line.name), id: toInt(line.id), born: toInt(line.born) })
+----
+
+Now Let's input the relationships between Persons and Movies. This is what they look like in the csv file. Again, there's a header file and the ids from the Person and Movie files. 
+
+
+```
+Person_id|Movie_id
+437|62
+```
+
+here's the query:
+[source,cypher]
+----
+LOAD CSV FROM 'link for relationship' AS line FIELDTERMINATOR '|'
+MATCH (p:Person {id: toInt(line.Person_id)}), (m:Movie {id: toInt(line.Movie_id)})
+MERGE (p)-[:ACTED_IN]-(m)
+----
+
+
+Let's take a look at what we got:
+
+[source,cypher]
+----
+MATCH (a)-[r]->(b)
+WHERE labels(a) <> [] AND labels(b) <> []
+RETURN DISTINCT head(labels(a)) AS This, type(r) as To, head(labels(b)) AS That
+----
+//table
+
+
+
+Although we were able to use out-of-the-box LOADCSV in this example, if the CSV file contains a significant number of rows (approaching hundreds of thousands or millions), we should use `USING PERIODIC COMMIT` or Michael's batch-import. `USING PERIODIC COMMIT` instructs Neo4j to perform a commit after a number of rows. This reduces the memory overhead of the transaction state. By default, the commit will happen every 1000 rows. For more information, see Section 11.9, “Using Periodic Commit”.
+
+http://docs.neo4j.org/chunked/stable/query-load-csv.html#load-csv-importing-large-amounts-of-data
+
+== Building a Movie Recommendation Engine
+
+Now that the data is loaded, we can have some fun. Even though there are only two node types and one relationship type, we can build and test a functional recommendation engine. 
+
+First, let's define what we're recommending. If I really enjoy 70s-style acting and hate the thought of digital cinematography, but have already watched every movie between 1970 and 1989, I might be interested in the following query:
+
+[source,cypher]
+----
+MATCH (actor:Person)-[:ACTS_IN]->(70s:Movie), (actor)-[:ACTS_IN]->(new:Movie)
+WHERE 70s.released > 1969 AND 70s.released < 1980
+RETURN m.title as Movie 
+ORDER BY COUNT(actor) DESC
+LIMIT 25
+----
+//table
+
+
+intro to graphgist
+- http://www.neo4j.org/learn/cypher
+- http://docs.neo4j.org/chunked/stable/cypherdoc-movie-database.html
+- http://docs.neo4j.org/chunked/stable/cypherdoc-social-movie-database.html
+
+

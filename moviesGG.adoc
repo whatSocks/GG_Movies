@@ -93,7 +93,7 @@ First, let's define what we're recommending. If I really enjoy 70s-style acting 
 ----
 MATCH (actor:Person)-[:ACTED_IN]->(seventies:Movie),(actor)-[:ACTED_IN]->(new:Movie)
 WHERE seventies.released > 1969 AND seventies.released < 1980 
-AND new.released > 1979 new.released > 1999 //The Phantom Menace (1999) heralded the shift from film to digital
+AND new.released > 1979 AND new.released < 1999 //The Phantom Menace (1999) heralded the shift from film to digital
 RETURN DISTINCT new.title AS `Beyond the 70s`
 ----
 //table

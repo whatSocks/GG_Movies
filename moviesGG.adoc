@@ -10,9 +10,8 @@
 
 This GraphGist demonstrates how to use the LOADCSV command in Cypher to build part of the iconic Neo Technology Movie Database example, and explore some of the queries used in the [name of movies webapp] example.  
 
-Although we can put a lot of information and really build out relationships in the the Movie Database example, this Graph Gist will only focus on Movies, Persons, and the (:Person)-[:ACTED_IN]->(:Movie) relationship. 
+Although we can put a lot of information and really build out relationships in the the Movie Database example, this Graph Gist will only focus on Movies, Persons, and the `(:Person)-[:ACTED_IN]->(:Movie)` relationship. 
 
-[loadcsv]
 == Using Load CSV
 
 To import data from a CSV file into Neo4j, you can use LOAD CSV to get the data into your query, then you write it to your database using the normal updating clauses of Cypher.
@@ -26,7 +25,7 @@ title|id|released|tagline|summary|rated|duration
 A Few Good Men|5|1992|In the heart of the nation's capital...|Neo military lawyer Kaffee...|R|138
 ```
 
-There are seven pipe-delimited fields, many rows, and a header row. 
+There are seven pipe-delimited fields, many rows, and a header row. Let's put them in. Note the double-quotes around the link to the CSV file.
 
 [source,cypher]
 ----
@@ -34,7 +33,6 @@ LOAD CSV
 WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv" AS line FIELDTERMINATOR '|'
 CREATE (:Movie { title: str(line.title), id: toInt(line.id), released: toInt(line.released), tagline: str(line.tagline), summary: str(line.summary), rated: str(line.rated), duration: str(line.duration)})
 ----
-//table 
 
 Let's input the Person nodes. This is what they look like in the csv file:
 
@@ -44,7 +42,7 @@ Aaron Sorkin|24|1961
 Adelaide Clemens|398|1989
 ```
 
-here's the query:
+Let's put them in.
 
 [source,cypher]
 ----
@@ -52,7 +50,6 @@ LOAD CSV
 WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/persons.csv" AS line FIELDTERMINATOR '|' 
 CREATE (:Person { name: str(line.name), id: toInt(line.id), born: toInt(line.born) })
 ----
-//table
 
 Now Let's input the relationships between Persons and Movies. This is what they look like in the csv file. Again, there's a header file and the ids from the Person and Movie files. 
 
@@ -71,7 +68,6 @@ FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/acted_in.csv"
 MATCH (p:Person {id: toInt(line.Person_id)}), (m:Movie {id: toInt(line.Movie_id)})
 MERGE (p)-[:ACTED_IN]-(m)
 ----
-//table
 
 Let's take a look at what we got:
 
@@ -83,13 +79,11 @@ RETURN DISTINCT head(labels(a)) AS This, type(r) as To, head(labels(b)) AS That
 ----
 //table
 
-
-
-Although we were able to use out-of-the-box LOADCSV in this example, if the CSV file contains a significant number of rows (approaching hundreds of thousands or millions), we should use `USING PERIODIC COMMIT` or Michael's batch-import. `USING PERIODIC COMMIT` instructs Neo4j to perform a commit after a number of rows. This reduces the memory overhead of the transaction state. By default, the commit will happen every 1000 rows. For more information, see Section 11.9, “Using Periodic Commit”.
+Although we were able to use out-of-the-box LOAD CSV in this example, if the CSV file contains a significant number of rows (approaching hundreds of thousands or millions), we should use `USING PERIODIC COMMIT` or Michael's batch-import. `USING PERIODIC COMMIT` instructs Neo4j to perform a commit after a number of rows. This reduces the memory overhead of the transaction state. By default, the commit will happen every 1000 rows. For more information, see Section 11.9, “Using Periodic Commit”.
 
 http://docs.neo4j.org/chunked/stable/query-load-csv.html#load-csv-importing-large-amounts-of-data
 
-== Building a Movie Recommendation Engine
+== Building a Movie Recommendation Engine: Getting Started
 
 Now that the data is loaded, we can have some fun. Even though there are only two node types and one relationship type, we can build and test a functional recommendation engine. 
 
@@ -98,17 +92,18 @@ First, let's define what we're recommending. If I really enjoy 70s-style acting 
 [source,cypher]
 ----
 MATCH (actor:Person)-[:ACTED_IN]->(seventies:Movie),(actor)-[:ACTED_IN]->(new:Movie)
-WHERE seventies.released > 1969 AND seventies.released < 1980 AND new.released > 1979
-RETURN DISTINCT new.title AS `beyond the 70s`
+WHERE seventies.released > 1969 AND seventies.released < 1980 A
+ND new.released > 1979 new.released > 1999 //The Phantom Menace (1999) heralded the shift from film to digital
+RETURN DISTINCT new.title AS `Beyond the 70s`
 ----
 //table
 
+This query just scratches the surface. On a real database you might want to attempt the challenges posed by the linkk:Netflix Prize[http://www.netflixprize.com/], build a recommendation machine for movies not usually found on Netflix (and there are a lot of them), or add more data and explore. 
 
 == References
 
-- http://www.neo4j.org/learn/cypher
-- http://docs.neo4j.org/chunked/stable/cypherdoc-movie-database.html
-- http://docs.neo4j.org/chunked/stable/cypherdoc-social-movie-database.html
-- http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/
+- http://www.neo4j.org/learn/cypher[Learn Cypher]
+- http://docs.neo4j.org/chunked/stable/cypherdoc-movie-database.html[The Movie Database]
+- http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/[Using LOAD CSV]
 
 

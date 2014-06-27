@@ -28,8 +28,6 @@ A Few Good Men|5|1992|In the heart of the nation's capital...|Neo military lawye
 
 There are seven pipe-delimited fields, many rows, and a header row. 
 
-Let's input the Movie nodes:
-
 [source,cypher]
 ----
 LOAD CSV
@@ -99,11 +97,9 @@ First, let's define what we're recommending. If I really enjoy 70s-style acting 
 
 [source,cypher]
 ----
-MATCH (actor:Person)-[:ACTS_IN]->(seventies:Movie), (actor)-[:ACTS_IN]->(new:Movie)
-WHERE seventies.released > 1969 AND seventies.released < 1980
-AND new.released > 1979
-RETURN new.title as `beyond the 70s` 
-LIMIT 25
+MATCH (actor:Person)-[:ACTED_IN]->(seventies:Movie),(actor)-[:ACTED_IN]->(new:Movie)
+WHERE seventies.released > 1969 AND seventies.released < 1980 AND new.released > 1979
+RETURN DISTINCT new.title AS `beyond the 70s`
 ----
 //table
 

@@ -6,7 +6,7 @@
 == Table of Contents
 
 [[introduction]]
-== LOASCSV and the Neo Technology Movie Graph
+== LOADCSV and the Neo Technology Movie Graph
 
 This GraphGist demonstrates how to use the LOADCSV command in Cypher to build part of the iconic Neo Technology Movie Database example, and explore some of the queries used in the [name of movies webapp] example.  
 

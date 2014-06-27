@@ -35,7 +35,10 @@ Let's input the Movie nodes:
 LOAD CSV
 WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv" AS line FIELDTERMINATOR '|'
 CREATE (:Movie { title: str(line.title), id: toInt(line.id), released: toInt(line.released), tagline: str(line.tagline), summary: str(line.summary), rated: str(line.rated), duration: str(line.duration)})
+RETURN *
+LIMIT 2
 ----
+//table 
 
 Let's input the Person nodes. This is what they look like in the csv file:
 
@@ -50,11 +53,12 @@ here's the query:
 [source,cypher]
 ----
 LOAD CSV 
-WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv" AS line FIELDTERMINATOR '|' 
-CREATE (:Movie { title: line.title, id: toInt(line.id), released: toInt(line.released), tagline: line.tagline, summary: line.summary, rated: line.rated, duration: toInt(line.duration)})
+WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/persons.csv" AS line FIELDTERMINATOR '|' 
+CREATE (:Person { name: str(line.name), id: toInt(line.id), born: toInt(line.born) })
 RETURN *
 LIMIT 2
 ----
+//table
 
 Now Let's input the relationships between Persons and Movies. This is what they look like in the csv file. Again, there's a header file and the ids from the Person and Movie files. 
 
@@ -72,8 +76,10 @@ WITH HEADERS
 FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/acted_in.csv" AS line FIELDTERMINATOR '|'
 MATCH (p:Person {id: toInt(line.Person_id)}), (m:Movie {id: toInt(line.Movie_id)})
 MERGE (p)-[:ACTED_IN]-(m)
+RETURN *
+LIMIT 2
 ----
-
+//table
 
 Let's take a look at what we got:
 

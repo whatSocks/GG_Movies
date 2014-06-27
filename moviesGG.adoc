@@ -105,8 +105,8 @@ First, let's define what we're recommending. If I really enjoy 70s-style acting 
 
 [source,cypher]
 ----
-MATCH (actor:Person)-[:ACTS_IN]->(70s:Movie), (actor)-[:ACTS_IN]->(new:Movie)
-WHERE 70s.released > 1969 AND 70s.released < 1980
+MATCH (actor:Person)-[:ACTS_IN]->(seventies:Movie), (actor)-[:ACTS_IN]->(new:Movie)
+WHERE seventies.released > 1969 AND seventies.released < 1980
 RETURN m.title as Movie 
 ORDER BY COUNT(actor) DESC
 LIMIT 25

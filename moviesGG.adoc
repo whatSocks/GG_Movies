@@ -31,7 +31,7 @@ There are seven pipe-delimited fields, many rows, and a header row. Let's put th
 ----
 LOAD CSV
 WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv" AS line FIELDTERMINATOR '|'
-CREATE (:Movie { title: str(line.title), id: toInt(line.id), released: toInt(line.released), tagline: str(line.tagline), summary: str(line.summary), rated: str(line.rated), duration: str(line.duration)})
+CREATE (:Movie { title: str(line.title), id: toInt(line.id), released: toInt(line.released), tagline: str(line.tagline), summary: str(line.summary), rated: str(line.rated), duration: line.duration})
 ----
 
 Let's input the Person nodes. This is what they look like in the csv file:

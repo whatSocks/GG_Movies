@@ -35,8 +35,6 @@ Let's input the Movie nodes:
 LOAD CSV
 WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv" AS line FIELDTERMINATOR '|'
 CREATE (:Movie { title: str(line.title), id: toInt(line.id), released: toInt(line.released), tagline: str(line.tagline), summary: str(line.summary), rated: str(line.rated), duration: str(line.duration)})
-RETURN *
-LIMIT 2
 ----
 //table 
 
@@ -55,8 +53,6 @@ here's the query:
 LOAD CSV 
 WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/persons.csv" AS line FIELDTERMINATOR '|' 
 CREATE (:Person { name: str(line.name), id: toInt(line.id), born: toInt(line.born) })
-RETURN *
-LIMIT 2
 ----
 //table
 
@@ -76,8 +72,6 @@ WITH HEADERS
 FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/acted_in.csv" AS line FIELDTERMINATOR '|'
 MATCH (p:Person {id: toInt(line.Person_id)}), (m:Movie {id: toInt(line.Movie_id)})
 MERGE (p)-[:ACTED_IN]-(m)
-RETURN *
-LIMIT 2
 ----
 //table
 
@@ -107,8 +101,8 @@ First, let's define what we're recommending. If I really enjoy 70s-style acting 
 ----
 MATCH (actor:Person)-[:ACTS_IN]->(seventies:Movie), (actor)-[:ACTS_IN]->(new:Movie)
 WHERE seventies.released > 1969 AND seventies.released < 1980
-RETURN m.title as Movie 
-ORDER BY COUNT(actor) DESC
+AND new.released > 1979
+RETURN new.title as `beyond the 70s` 
 LIMIT 25
 ----
 //table

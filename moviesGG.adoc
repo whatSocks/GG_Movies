@@ -100,6 +100,62 @@ RETURN DISTINCT new.title AS `Beyond the 70s`
 
 This query just scratches the surface. On a real database you might want to attempt the challenges posed by the http://www.netflixprize.com/[Netflix Prize], build a recommendation machine for movies not usually found on Netflix (and there are a lot of them), or add more data and explore. 
 
+== The Movies Web App
+
+Neo Technology has built a web app to explore the movie database. link:http://neo4jmovies.herokuapp.com/#/movies[Take a look]!
+
+The website uses link:http://movieapi-neo4j.herokuapp.com/docs/[Swagger], a language-agnostic framework implementation for describing, producing, consuming, and visualzing RESTful web services. The the Neo4j Movies app uses the link:https://github.com/tinj/node-neo4j-swagger-api[node-neo4j-swagger-api], which is particularly useful as it displays the Cypher associated with each call to an endpoint. 
+
+For example, let's see what happens when we look for co-actors of, say, link:http://neo4jmovies.herokuapp.com/index.html#/people/Tom%20Hanks[Tom Hanks]. 
+
+If a user were to meander over to the Tom Hank's Person page, they'd see a row of related actors at the bottom. These are Tom Hank's co-Actors, and are populated by the following query:
+
+[source,cypher]
+----
+MATCH (actor:Person {name: "Tom Hanks"})
+MATCH (actor)-[:ACTED_IN]->(m)
+WITH m, actor
+MATCH (m)<-[:ACTED_IN]-(person:Person)
+WHERE actor <> person
+RETURN person
+----
+//table
+
+or, in a more graphical form:
+
+[source,cypher]
+----
+MATCH p = (actor:Person {name: "Tom Hanks"})-[:ACTED_IN]->(m)
+WITH m, actor
+MATCH (m)<-[:ACTED_IN]-(person:Person)
+WHERE actor <> person
+RETURN p
+----
+//graph_result
+
+What about the movies Tom Hanks has acted in? The web app sends this query:
+
+[source,cypher]
+----
+MATCH (actor:Person {name: "Tom Hanks" })
+MATCH (actor)-[:ACTED_IN]->(movie)
+RETURN movie
+----
+//table
+
+or, in a more graphical form:
+
+[source,cypher]
+----
+MATCH p = (actor:Person {name: "Tom Hanks" })-[:ACTED_IN]->(movie)
+RETURN p
+----
+//graph_result
+
+
+== Conclusion
+
+
 == References
 
 - http://www.neo4j.org/learn/cypher[Learn Cypher]

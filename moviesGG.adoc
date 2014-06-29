@@ -145,7 +145,7 @@ or, in a more graphical form:
 
 [source,cypher]
 ----
-MATCH p = (actor:Person {name: str("Tom Hanks") })-[:ACTED_IN]->(movie:Movie)
+MATCH p = (actor:Person {name: "Tom Hanks"})-[:ACTED_IN]->(movie:Movie)
 RETURN p
 ----
 //graph_result

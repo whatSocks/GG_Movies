@@ -153,13 +153,15 @@ RETURN p
 
 == More Exploration
 
+Swagger, Neo4j, and AngularJS are powerful that can get your web product, either as a demonstration prototyle or a full-fledged web application. 
 
-
+Take a look at the link:https://github.com/kbastani/neo4j-movies-template[Neo4j Movie Website Template] to get started!
 
 == References
 
 - http://www.neo4j.org/learn/cypher[Learn Cypher]
 - http://docs.neo4j.org/chunked/stable/cypherdoc-movie-database.html[The Movie Database]
 - http://jexp.de/blog/2014/06/using-load-csv-to-import-git-history-into-neo4j/[Using LOAD CSV]
+- https://github.com/kbastani/neo4j-movies-template[Neo4j Movie Website Template]
 
 

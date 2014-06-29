@@ -31,7 +31,7 @@ There are seven pipe-delimited fields, many rows, and a header row. Let's put th
 ----
 LOAD CSV
 WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/movies.csv" AS line FIELDTERMINATOR '|'
-CREATE (:Movie { title: str(line.title), id: toInt(line.id), released: toInt(line.released), tagline: str(line.tagline), summary: str(line.summary), rated: str(line.rated), duration: line.duration})
+CREATE (:Movie { title: line.title, id: toInt(line.id), released: toInt(line.released), tagline: line.tagline, summary: line.summary, rated: line.rated, duration: line.duration})
 ----
 
 Let's input the Person nodes. This is what they look like in the csv file:
@@ -48,7 +48,7 @@ Let's put them in.
 ----
 LOAD CSV 
 WITH HEADERS FROM "https://raw.githubusercontent.com/whatSocks/GG_Movies/master/persons.csv" AS line FIELDTERMINATOR '|' 
-CREATE (:Person { name: str(line.name), id: toInt(line.id), born: toInt(line.born) })
+CREATE (:Person { name: line.name, id: toInt(line.id), born: toInt(line.born) })
 ----
 
 Now Let's input the relationships between Persons and Movies. This is what they look like in the csv file. Again, there's a header file and the ids from the Person and Movie files. 
@@ -112,7 +112,7 @@ If a user were to meander over to the Tom Hank's Person page, they'd see a row o
 
 [source,cypher]
 ----
-MATCH (actor:Person {name: str("Tom Hanks")})
+MATCH (actor:Person {name: "Tom Hanks"})
 MATCH (actor)-[:ACTED_IN]->(m)
 WITH m, actor
 MATCH (m)<-[:ACTED_IN]-(person:Person)
@@ -125,7 +125,7 @@ or, in a more graphical form:
 
 [source,cypher]
 ----
-MATCH p = (actor:Person {name: str("Tom Hanks")})-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(person:Person)
+MATCH p = (actor:Person {name: "Tom Hanks"})-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(person:Person)
 WHERE actor <> person
 RETURN p
 ----
@@ -135,7 +135,7 @@ What about the movies Tom Hanks has acted in? The web app sends this query:
 
 [source,cypher]
 ----
-MATCH (actor:Person {name: str("Tom Hanks") })
+MATCH (actor:Person {name: "Tom Hanks" })
 MATCH (actor)-[:ACTED_IN]->(movie)
 RETURN movie
 ----
@@ -151,7 +151,9 @@ RETURN p
 //graph_result
 
 
-== Conclusion
+== More Exploration
+
+
 
 
 == References

@@ -112,7 +112,7 @@ If a user were to meander over to the Tom Hank's Person page, they'd see a row o
 
 [source,cypher]
 ----
-MATCH (actor:Person {name: "Tom Hanks"})
+MATCH (actor:Person {name: str("Tom Hanks")})
 MATCH (actor)-[:ACTED_IN]->(m)
 WITH m, actor
 MATCH (m)<-[:ACTED_IN]-(person:Person)
@@ -125,7 +125,7 @@ or, in a more graphical form:
 
 [source,cypher]
 ----
-MATCH p = (actor:Person {name: "Tom Hanks"})-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(person:Person)
+MATCH p = (actor:Person {name: str("Tom Hanks")})-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(person:Person)
 WHERE actor <> person
 RETURN p
 ----
@@ -135,7 +135,7 @@ What about the movies Tom Hanks has acted in? The web app sends this query:
 
 [source,cypher]
 ----
-MATCH (actor:Person {name: "Tom Hanks" })
+MATCH (actor:Person {name: str("Tom Hanks") })
 MATCH (actor)-[:ACTED_IN]->(movie)
 RETURN movie
 ----
@@ -145,7 +145,7 @@ or, in a more graphical form:
 
 [source,cypher]
 ----
-MATCH p = (actor:Person {name: "Tom Hanks" })-[:ACTED_IN]->(movie:Movie)
+MATCH p = (actor:Person {name: str("Tom Hanks") })-[:ACTED_IN]->(movie:Movie)
 RETURN p
 ----
 //graph_result
